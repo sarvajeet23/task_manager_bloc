@@ -6,10 +6,9 @@ This project is a Flutter-based Task Manager app that utilizes **BLoC (Business 
 
 ## App Screenshot
 
-![Screenshot_1739988419](https://github.com/user-attachments/assets/600e0e30-0394-4f5c-ba4d-944412caed24)
-
-![Screenshot_1739988400](https://github.com/user-attachments/assets/ea3790d4-96fa-4331-9877-19bb97a9ffe0)
-![Screenshot_1739988410](https://github.com/user-attachments/assets/a293ad5a-e64f-4a61-bc31-6e302d8c67cf)
+<img src="https://github.com/user-attachments/assets/600e0e30-0394-4f5c-ba4d-944412caed24" width="300" height="600" />
+<img src="https://github.com/user-attachments/assets/ea3790d4-96fa-4331-9877-19bb97a9ffe0" width="300" height="600" />
+<img src="https://github.com/user-attachments/assets/a293ad5a-e64f-4a61-bc31-6e302d8c67cf" width="300" height="600" />
 
 ## Folder Structure
 
