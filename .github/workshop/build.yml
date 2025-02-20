@@ -38,4 +38,5 @@ jobs:
         with:
           artifacts: "build/app/outputs/apk/release/*.apk"
           tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TODO }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
