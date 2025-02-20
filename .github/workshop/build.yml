@@ -81,7 +81,7 @@ jobs:
         # Build ipa
       - name: Build iOS (No Codesign)
         env:
-          APP_STORE_TOKEN: ${{ secrets.IOS_BUILD }}
+          APP_STORE_TOKEN: ${{ secrets.TODO }}
         run: flutter build ios --no-codesign
 
       #  Create the IPA file manually
