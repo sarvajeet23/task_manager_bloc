@@ -1,0 +1,102 @@
+name: Build iOS and Android
+
+on:
+  push:
+    branches:
+      - master  
+# iso job
+jobs:
+  build-ios: 
+    name: Build & Release Ipa
+    runs-on: macos-latest  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      #  Cache Flutter SDK
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: /Users/runner/hostedtoolcache/flutter
+          key: flutter-macos-stable-3.29.0-arm64
+          restore-keys: |
+            flutter-macos-stable-
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          cache: true
+
+      - name: Check Flutter Version
+        run: flutter --version 
+
+      #  Cache Dart & Flutter dependencies
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: flutter-deps-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: |
+            flutter-deps-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+    #   - name: Verify Dart Version
+    #     run: dart --version  
+
+      #  Cache CocoaPods to speed up iOS builds
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
+      #  Ensure iOS Directory & Generate Podfile if Missing
+      - name: Ensure iOS directory & generate Podfile if missing
+        run: |
+          if [ ! -d "ios" ]; then
+            flutter create .
+          fi
+          if [ ! -f "ios/Podfile" ]; then
+            flutter pub get
+            cd ios && pod init && cd ..
+          fi
+
+      #  Install CocoaPods Dependencies
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          test -f Podfile || pod init  # Ensure Podfile exists
+          pod install --repo-update
+
+
+      #  Build APK
+      - name: Build APK
+        run: flutter build apk --release
+
+        # Build ipa
+      - name: Build iOS (No Codesign)
+        env:
+          APP_STORE_TOKEN: ${{ secrets.IOS_BUILD }}
+        run: flutter build ios --no-codesign
+
+      #  Create the IPA file manually
+      - name: Create IPA
+        run: |
+          mkdir -p build/ios/ipa
+          cd build/ios/iphoneos
+          zip -r ../ipa/Runner.ipa Runner.app
+
+      #  Publish IPA to a GitHub release
+      - name: Push to Releases on GitHub
+        uses: ncipollo/release-action@v1
+        with:
+           name: iOS
+           artifacts: |
+            #  build/app/outputs/flutter-apk/app-release.apk
+             build/ios/ipa/Runner.ipa
+           tag: v1.0.${{ github.run_number }}

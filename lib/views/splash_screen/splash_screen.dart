@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/main.dart';
+import 'package:task_manager/routes/app_routes.dart';
 import 'package:task_manager/view_models/auth/cubit/auth_cubit.dart';
 
 class SplashScreen extends StatelessWidget {
